@@ -1,0 +1,27 @@
+Recorded on: 2026-07-08T17:28:56Z UTC
+
+OS
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.4 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+
+Kernel
+6.8.0-134-generic
+
+Python (system)
+Python 3.12.3
+
+Python (project venv, isolated, capability-granted)
+Path: /home/jerrygmi/wire-up-ids/.venv/bin/python3
+Version: Python 3.12.3
+
+tcpdump
+tcpdump version 4.99.4
+libpcap version 1.10.4 (with TPACKET_V3)
+
+tshark
+TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3).
+
+git
+git version 2.43.0

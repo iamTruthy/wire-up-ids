@@ -1,0 +1,54 @@
+Capture interface
+=================
+Interface name: wlp0s20f3
+Type: wireless (managed mode, kernel delivers decrypted Ethernet-shaped frames)
+IPv4 at project start: 192.168.8.250/24
+LAN gateway: 192.168.8.1
+Default route confirmed via: ip route show default
+
+Discovery commands used
+-----------------------
+ip -brief link show
+ip -brief addr show
+ip route show default
+
+Capture privilege
+=================
+Mechanism: CAP_NET_RAW granted to the project-local Python interpreter only.
+
+The interpreter at .venv/bin/python3 is a real ELF copy created with
+python3 -m venv --copies, not a symlink into /usr/bin. The capability
+therefore applies to this file and nothing else on the system. The system
+Python at /usr/bin/python3 remains unprivileged.
+
+Grant command (run once at project start)
+-----------------------------------------
+sudo setcap cap_net_raw+ep .venv/bin/python3
+
+Verification commands
+---------------------
+getcap .venv/bin/python3
+    expected: .venv/bin/python3 cap_net_raw=ep
+
+getcap /usr/bin/python3
+    expected: (empty, no capability leaked to system Python)
+
+.venv/bin/python3 -c "import socket; s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003)); print(s); s.close()"
+    expected: prints an AF_PACKET socket object
+
+/usr/bin/python3 -c "import socket; s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003)); print(s); s.close()"
+    expected: PermissionError [Errno 1] Operation not permitted
+
+All four checks passed at project start.
+
+REVOKE command (run once at project end to restore machine to baseline)
+-----------------------------------------------------------------------
+sudo setcap -r .venv/bin/python3
+
+After revoking, verify with:
+    getcap .venv/bin/python3
+    expected: (empty)
+
+Deleting the .venv directory also destroys the capability, since it lives
+on the file. There is no user-level, group-level, or system-level
+permission change to undo.
