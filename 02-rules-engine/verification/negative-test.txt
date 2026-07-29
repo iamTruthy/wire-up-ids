@@ -1,0 +1,19 @@
+Rule engine negative test (no false positives on ordinary traffic)
+-------------------------------------------------------------------
+Engine run on real interface: rules.py wlp0s20f3, 45-second window.
+
+Ordinary traffic generated during the window:
+  curl to example.com, wikipedia.org, python.org,
+       news.ycombinator.com, github.com
+  dig github.com, cloudflare.com
+  ping -c 5 8.8.8.8
+  plus normal browser activity
+
+Result:
+  engine startup line present (confirms it ran the full window)
+  ALERT count: 0
+  No rule fired on any legitimate traffic.
+
+This is the discriminating half of the verification. Combined with the
+true-positive tests, the engine fires on port scans, SYN floods, and
+NULL/Xmas scans, and stays silent on normal browsing, DNS, and ping.

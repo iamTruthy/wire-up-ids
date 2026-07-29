@@ -1,0 +1,17 @@
+Rule engine true-positive verification (loopback self-test)
+-----------------------------------------------------------
+Engine run: .venv/bin/python3 02-rules-engine/rules.py lo
+
+Attack traffic generated against 127.0.0.1 (own machine):
+  nmap -sT -p 1-100 127.0.0.1     full-connect scan, 100 ports
+  sudo nmap -sN -p 1-50 127.0.0.1 NULL scan
+  sudo nmap -sX -p 1-50 127.0.0.1 Xmas scan
+
+Alerts produced (one per event after dedupe):
+  ALERT Port scan detected from 127.0.0.1 (20 distinct ports in 10s)
+  ALERT SYN flood detected from 127.0.0.1 (100 SYNs vs 98 ACKs in 5s)
+  ALERT NULL scan packet detected from 127.0.0.1
+  ALERT Xmas scan packet detected from 127.0.0.1
+
+All three rules fired on the behavior each targets. Deduplication holds:
+one alert per source per event, not one per packet.

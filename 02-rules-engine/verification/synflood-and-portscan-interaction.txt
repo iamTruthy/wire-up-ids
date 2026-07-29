@@ -1,0 +1,40 @@
+Finding: port-scan rule fires on flood *responses*, not just scan probes
+========================================================================
+Test: sudo hping3 -S -p 80 --flood -c 500 127.0.0.1
+Engine: .venv/bin/python3 02-rules-engine/rules.py lo
+
+Observed (before fix):
+  ALERT Port scan detected from 127.0.0.1 (20 distinct ports in 10s)
+  ALERT SYN flood detected from 127.0.0.1 (100 SYNs vs 98 ACKs in 5s)
+
+The SYN-flood alert is expected. The port-scan alert was not, since all
+500 SYNs targeted a single port (80). Cause: hping3 --flood randomizes its
+source port per packet. The target stack answers each SYN to closed port 80
+with a RST sent back to those randomized ports. On loopback, which carries
+both directions, the engine sees those RSTs as traffic to many distinct
+destination ports from 127.0.0.1, and the port-scan heuristic fires on the
+victim's own replies rather than on scan probes.
+
+Root weakness: the naive port-scan rule counts every packet's destination
+port without regard to direction or TCP state. Any interface that sees both
+sides of a flow can therefore turn a single-port flood, or normal server
+replies, into apparent scan activity.
+
+Fix applied: the port-scan detector now counts only bare-SYN packets
+(flags == "SYN") toward the distinct-port total. Scan probes are SYNs;
+responses (RST, SYN+ACK, ACK) are excluded. Re-test result recorded below
+the fix.
+
+Re-test after fix
+=====------=======
+Flood (sudo hping3 -S -p 80 --flood -c 500 127.0.0.1):
+  ALERT SYN flood detected from 127.0.0.1 (100 SYNs vs 98 ACKs in 5s)
+  (no port-scan alert — flood responses no longer counted)
+
+Real SYN scan (sudo nmap -sS -p 1-100 127.0.0.1):
+  ALERT Port scan detected from 127.0.0.1 (20 distinct ports in 10s)
+  ALERT SYN flood detected from 127.0.0.1 (100 SYNs vs 98 ACKs in 5s)
+  (port-scan fires correctly; SYN-flood also fires because a fast SYN
+   scan is genuinely many half-open SYNs, which is correct)
+
+Fix confirmed: quiet on flood responses, still detects genuine scans.
