@@ -1,0 +1,41 @@
+Hardening via adversarial training, and an adaptive follow-up attack
+====================================================================
+
+Method
+  Adversarial training. Padded copies of the TRAINING-set attack flows were
+  generated with the same realizable packet-padding used in the evasion, kept
+  their ATTACK label, and added to the training data. A new Random Forest was
+  trained on the augmented set (2,264,594 original + 446,117 padded flows).
+
+Before and after (padded-attack evasion, full test set, all attack types)
+  BEFORE hardening: 0.4345
+  AFTER  hardening: 0.0000
+  Hardened model recall on NORMAL (unpadded) attacks: 0.9978
+  Hardened model specificity on benign traffic:       0.9993
+
+  Adversarial training closed the padding evasion completely with no
+  measurable loss of normal-attack detection or benign specificity. The
+  model learned that a padded port scan is still a port scan.
+
+Adaptive follow-up: attack a feature family NOT trained against
+  The hardened model detects the 1000 target port scans at 1.0000 baseline.
+  Perturbing TIMING features (flow duration, IAT statistics), which were not
+  part of the padding hardening:
+    perturb 1 timing feature  -> 0.0000
+    perturb 3                 -> 0.0010
+    perturb 5                 -> 0.0020
+    perturb 7                 -> 0.0870
+
+  The timing attack reaches only 8.7% at 7 features, far below the ~93% that
+  padding achieved against the original model. Two likely reasons: timing
+  features carry less port-scan signal than size features, and adversarial
+  training may have broadened the model's reliance across more features. The
+  curve is still rising at k=7 and had not plateaued.
+
+Conclusion
+  Adversarial training raised the cost of evasion substantially and even
+  generalized partly to an untrained perturbation family. It did not make the
+  model immune. A determined adaptive attacker still finds headroom, and a
+  combined size-and-timing perturbation would likely do better. Robustness
+  here is an arms race in which the defender raises the bar, not a solved
+  problem.
