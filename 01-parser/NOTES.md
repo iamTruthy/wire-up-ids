@@ -1,4 +1,4 @@
-# Stage 01 — The Parser
+# Stage 01 - The Parser
 
 ## What this is
 
@@ -96,6 +96,6 @@ the parser emitted matched tshark's decoding of the same packets, across the
 full handshake, data transfer, and teardown. The record is in
 verification/tshark-crosscheck.txt.
 
-## What i learnt
+## What I learnt
 
 Writing this by hand changed how I read a packet. Before this, a packet was an abstraction I trusted a library to decode. Attempting the byte math myself made it concrete: the IHL nibble is the thing that tells you where the next header starts. The flags byte was the most satisfying part, because a single byte tells you the connection works, SYN to open, SYN+ACK to accept, FIN to close, and once you decode it by hand you stop needing a tool to tell you what a handshake looks like. The other thing I did not expect was seeing traffic on the wire that was not addressed to me, which made it more obvious or clear that capturing at the link layer is a genuinely different vantage point from a normal socket. I built the parser this way, because I wanted network analysis to be something I understand from first principles.

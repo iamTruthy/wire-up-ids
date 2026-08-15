@@ -1,4 +1,4 @@
-# Stage 03 — The ML Detector
+# Stage 03 - The ML Detector
 
 ## What this is
 

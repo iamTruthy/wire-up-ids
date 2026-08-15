@@ -1,4 +1,4 @@
-# Stage 02 — The Rule-Based Detection Engine
+# Stage 02 - The Rule-Based Detection Engine
 
 ## What this is
 
@@ -80,7 +80,7 @@ verification/negative-test.txt.
 The engine fires on the behaviours each rule targets and stays silent on
 legitimate traffic. That discrimination is the whole point.
 
-## What i learnt
+## What I learnt
 
 The finding that taught me the most was the port-scan rule firing on a flood I aimed at a single port. I expected the distinct-port count to stay at one, and when the alert fired anyway I had to actually trace where those ports were coming from, and it turned out to be the victim's own RST replies on a link that carries both directions.
 A signature rule does not understand a connection, it only sees packets, and it will happily count the defender's responses as if they were the attacker's probes. 

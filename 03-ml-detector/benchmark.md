@@ -1,4 +1,4 @@
-# Stage 03 — Benchmark
+# Stage 03 - Benchmark
 
 ## Setup
 
@@ -7,7 +7,7 @@ reported. The first is a standard same-distribution split. The second is a
 cross-day generalization test, which is the more honest measure and the more
 important result.
 
-## Evaluation 1 — same-distribution split (the flattering number)
+## Evaluation 1 - same-distribution split (the flattering number)
 
 Trained on an 80/20 stratified split of the full CIC-IDS2017 set:
 2,830,743 flows, 77 features, 19.7% attack rate. Held-out test: 566,149 flows.
@@ -40,7 +40,7 @@ Even here the cracks show. Bot recall is only 0.801, and the rare classes
 have too few test flows to assess. But the headline F1 of 0.9976 looks like a
 solved problem. It is not.
 
-## Evaluation 2 — cross-day generalization (the honest number)
+## Evaluation 2 - cross-day generalization (the honest number)
 
 Trained on Monday through Thursday (brute force, DoS, web attacks,
 infiltration). Tested on Friday, a day the model never saw, containing

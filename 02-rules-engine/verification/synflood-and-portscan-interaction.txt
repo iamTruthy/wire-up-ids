@@ -29,7 +29,7 @@ Re-test after fix
 =====------=======
 Flood (sudo hping3 -S -p 80 --flood -c 500 127.0.0.1):
   ALERT SYN flood detected from 127.0.0.1 (100 SYNs vs 98 ACKs in 5s)
-  (no port-scan alert — flood responses no longer counted)
+  (no port-scan alert - flood responses no longer counted)
 
 Real SYN scan (sudo nmap -sS -p 1-100 127.0.0.1):
   ALERT Port scan detected from 127.0.0.1 (20 distinct ports in 10s)
